@@ -105,7 +105,10 @@ def send_telegram_notification(message):
         payload = {
             'chat_id': chat_id,
             'text': message,
-            'parse_mode': 'HTML'
+            'parse_mode': 'HTML',
+            'link_preview_options': {
+                'is_disabled': True
+            }
         }
         response = requests.post(url, data=payload)
         if response.status_code != 200:
@@ -137,7 +140,7 @@ def generate_message(tx: TxData, type_of_message: int, value=0) -> str:
     elif type_of_message == 3:
         message = (
             f"⚡️ <b>С контракта выведены FTN</b>\n"
-            f"Сумма: {float(web3.from_wei(tx['value'], 'ether'))}:.2f FTN\n"
+            f"Сумма: {float(web3.from_wei(tx['value'], 'ether')):.2f} FTN\n"
             f"Ссылка: <a href='https://www.ftnscan.com/tx/0x{tx['hash'].hex()}'>Посмотреть</a>"
         )
     return message
