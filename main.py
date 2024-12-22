@@ -1,4 +1,5 @@
 import csv
+import json
 from dataclasses import dataclass
 from typing import Dict
 
@@ -32,6 +33,7 @@ transit_wallets: Dict[str, Wallet] = {}
 contract_address = '0x0ca83dd56af172a1e04b667d6e64446d0b88c4a4'
 TELEGRAM_BOT_TOKEN = '7663401015:AAEnpvk5PoMw1KXGWXnehfZUlvZ_PvPG7aE'
 TELEGRAM_CHAT_IDS = ['717664582', '508884173', '667789228']
+# TELEGRAM_CHAT_IDS = ['508884173']
 
 
 def get_all_transits_wallets(hot_wallet: str, exchange_name: str):
@@ -106,9 +108,9 @@ def send_telegram_notification(message):
             'chat_id': chat_id,
             'text': message,
             'parse_mode': 'HTML',
-            'link_preview_options': {
+            'link_preview_options': json.dumps({
                 'is_disabled': True
-            }
+            })
         }
         response = requests.post(url, data=payload)
         if response.status_code != 200:
