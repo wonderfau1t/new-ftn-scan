@@ -88,7 +88,7 @@ def handle_new_block(block: BlockData):
 
         elif tx['to'].lower() == contract_address:
             if tx['input'].startswith('0x98dcef71'):
-                value = get_amount_of_ftn(f'0x{tx['hash'].hex()}')
+                value = get_amount_of_ftn(f'0x{tx["hash"].hex()}')
                 if value > 5000:
                     message = generate_message(tx, 3, value)
                     send_telegram_notification(message)
