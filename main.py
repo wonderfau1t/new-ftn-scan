@@ -80,9 +80,9 @@ def handle_new_block(block: BlockData):
 
         # Если идет деп на горячий кошелек, то добваляем его в список транзитных
         elif tx['to'].lower() in exchange_hot_wallets and tx['from'].lower() not in transit_wallets:
+            transit_wallets[tx['from'].lower()] = Wallet(tx['from'].lower(),
+                                                         exchange_hot_wallets[tx['to'].lower()].exchange_name)
             if web3.from_wei(tx['value'], 'ether') > 5000:
-                transit_wallets[tx['from'].lower()] = Wallet(tx['from'].lower(),
-                                                             exchange_hot_wallets[tx['to'].lower()].exchange_name)
                 message = generate_message(tx, 2)
                 send_telegram_notification(message)
 
