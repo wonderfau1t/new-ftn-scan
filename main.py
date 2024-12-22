@@ -87,7 +87,7 @@ def handle_new_block(block: BlockData):
                 send_telegram_notification(message)
 
         elif tx['to'].lower() == contract_address:
-            if tx['input'].startswith('0x98dcef71'):
+            if f'0x{tx['input'].hex()}'.startswith('0x98dcef71'):
                 value = get_amount_of_ftn(f'0x{tx["hash"].hex()}')
                 if value > 5000:
                     message = generate_message(tx, 3, value)
@@ -171,4 +171,13 @@ def main():
             handle_new_block(block)
 
 
-main()
+def main_process():
+    try:
+        main()
+    except Exception as e:
+        send_telegram_notification("Ошибка на сервере:\n"
+                                   f"<code>{e}</code>")
+
+
+if __name__ == '__main__':
+    main_process()
