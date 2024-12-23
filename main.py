@@ -74,31 +74,35 @@ def get_amount_of_ftn(tx_hash):
 def handle_new_block(block: BlockData):
     transactions = block['transactions']
     for tx in transactions:
-
-        if tx['to'].lower() in transit_wallets:  # Если в транзакции идет деп на транзитный кошелек
-            if web3.from_wei(tx['value'], 'ether') > 5000:
-                message = generate_message(tx, 1)
-                send_telegram_notification(message)
-
-        # Если идет деп на горячий кошелек, то добваляем его в список транзитных
-        elif tx['to'].lower() in exchange_hot_wallets and tx['from'].lower() not in transit_wallets:
-            transit_wallets[tx['from'].lower()] = Wallet(tx['from'].lower(),
-                                                         exchange_hot_wallets[tx['to'].lower()].exchange_name)
-            if web3.from_wei(tx['value'], 'ether') > 5000:
-                message = generate_message(tx, 2)
-                send_telegram_notification(message)
-
-        elif tx['to'].lower() == contract_address:
-            if f'0x{tx['input'].hex()}'.startswith('0x98dcef71'):
-                value = get_amount_of_ftn(f'0x{tx["hash"].hex()}')
-                if value > 5000:
-                    message = generate_message(tx, 3, value)
+        try:
+            if tx['to'].lower() in transit_wallets:  # Если в транзакции идет деп на транзитный кошелек
+                if web3.from_wei(tx['value'], 'ether') > 5000:
+                    message = generate_message(tx, 1)
                     send_telegram_notification(message)
-                else:
-                    pass
 
-        else:
-            pass
+            # Если идет деп на горячий кошелек, то добваляем его в список транзитных
+            elif tx['to'].lower() in exchange_hot_wallets and tx['from'].lower() not in transit_wallets:
+                transit_wallets[tx['from'].lower()] = Wallet(tx['from'].lower(),
+                                                             exchange_hot_wallets[tx['to'].lower()].exchange_name)
+                if web3.from_wei(tx['value'], 'ether') > 5000:
+                    message = generate_message(tx, 2)
+                    send_telegram_notification(message)
+
+            elif tx['to'].lower() == contract_address:
+                if f'0x{tx['input'].hex()}'.startswith('0x98dcef71'):
+                    value = get_amount_of_ftn(f'0x{tx["hash"].hex()}')
+                    if value > 5000:
+                        message = generate_message(tx, 3, value)
+                        send_telegram_notification(message)
+                    else:
+                        pass
+
+            else:
+                pass
+        except Exception as e:
+            send_telegram_notification(f"<b>Ошибка с транзакцией (разраб пофикси):</b>\ntx-hash: <code>{tx['hash']}</code>")
+            print(tx['hash'])
+            print(e)
 
 
 def send_telegram_notification(message):
