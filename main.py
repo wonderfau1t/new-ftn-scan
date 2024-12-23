@@ -100,7 +100,9 @@ def handle_new_block(block: BlockData):
             else:
                 pass
         except Exception as e:
-            send_telegram_notification(f"<b>Ошибка с транзакцией (разраб пофикси):</b>\ntx-hash: <code>{tx['hash']}</code>")
+            send_telegram_notification(f"<b>Ошибка с транзакцией (разраб пофикси):"
+                                       f"block: <code>{tx['blockNumber']}</code>"
+                                       f"</b>\ntx-hash: <code>0x{tx['hash'].hex()}</code>")
             print(tx['hash'])
             print(e)
 
